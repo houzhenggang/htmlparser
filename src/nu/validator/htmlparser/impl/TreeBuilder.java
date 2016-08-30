@@ -393,8 +393,6 @@ public abstract class TreeBuilder<T> implements TokenHandler,
 
     private DoctypeExpectation doctypeExpectation = DoctypeExpectation.HTML;
 
-    private LocatorImpl firstCommentLocation;
-
     // ]NOCPP]
 
     private boolean scriptingEnabled = false;
@@ -610,7 +608,6 @@ public abstract class TreeBuilder<T> implements TokenHandler,
         html4 = false;
         idLocations.clear();
         wantingComments = wantsComments();
-        firstCommentLocation = null;
         // ]NOCPP]
         start(fragment);
         charBufferLen = 0;
@@ -767,22 +764,12 @@ public abstract class TreeBuilder<T> implements TokenHandler,
                                 publicIdentifier, systemIdentifier, false);
                     } else if (isAlmostStandards(publicIdentifier,
                             systemIdentifier)) {
-                        // [NOCPP[
-                        if (firstCommentLocation != null) {
-                            warn("Comments seen before doctype. Internet Explorer will go into the quirks mode.",
-                                    firstCommentLocation);
-                        }
-                        // ]NOCPP]
                         errAlmostStandardsDoctype();
                         documentModeInternal(
                                 DocumentMode.ALMOST_STANDARDS_MODE,
                                 publicIdentifier, systemIdentifier, false);
                     } else {
                         // [NOCPP[
-                        if (firstCommentLocation != null) {
-                            warn("Comments seen before doctype. Internet Explorer will go into the quirks mode.",
-                                    firstCommentLocation);
-                        }
                         if ((Portability.literalEqualsString(
                                 "-//W3C//DTD HTML 4.0//EN", publicIdentifier) && (systemIdentifier == null || Portability.literalEqualsString(
                                 "http://www.w3.org/TR/REC-html40/strict.dtd",
@@ -825,19 +812,11 @@ public abstract class TreeBuilder<T> implements TokenHandler,
                                 publicIdentifier, systemIdentifier, true);
                     } else if (isAlmostStandards(publicIdentifier,
                             systemIdentifier)) {
-                        if (firstCommentLocation != null) {
-                            warn("Comments seen before doctype. Internet Explorer will go into the quirks mode.",
-                                    firstCommentLocation);
-                        }
                         err("Almost standards mode doctype. Expected \u201C<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\u201D.");
                         documentModeInternal(
                                 DocumentMode.ALMOST_STANDARDS_MODE,
                                 publicIdentifier, systemIdentifier, true);
                     } else {
-                        if (firstCommentLocation != null) {
-                            warn("Comments seen before doctype. Internet Explorer will go into the quirks mode.",
-                                    firstCommentLocation);
-                        }
                         if ("-//W3C//DTD HTML 4.01//EN".equals(publicIdentifier)) {
                             if (!"http://www.w3.org/TR/html4/strict.dtd".equals(systemIdentifier)) {
                                 warn("The doctype did not contain the system identifier prescribed by the HTML 4.01 specification. Expected \u201C<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\u201D.");
@@ -859,10 +838,6 @@ public abstract class TreeBuilder<T> implements TokenHandler,
                                 publicIdentifier, systemIdentifier, true);
                     } else if (isAlmostStandards(publicIdentifier,
                             systemIdentifier)) {
-                        if (firstCommentLocation != null) {
-                            warn("Comments seen before doctype. Internet Explorer will go into the quirks mode.",
-                                    firstCommentLocation);
-                        }
                         if ("-//W3C//DTD HTML 4.01 Transitional//EN".equals(publicIdentifier)
                                 && systemIdentifier != null) {
                             if (!"http://www.w3.org/TR/html4/loose.dtd".equals(systemIdentifier)) {
@@ -875,10 +850,6 @@ public abstract class TreeBuilder<T> implements TokenHandler,
                                 DocumentMode.ALMOST_STANDARDS_MODE,
                                 publicIdentifier, systemIdentifier, true);
                     } else {
-                        if (firstCommentLocation != null) {
-                            warn("Comments seen before doctype. Internet Explorer will go into the quirks mode.",
-                                    firstCommentLocation);
-                        }
                         err("The doctype was not the HTML 4.01 Transitional doctype. Expected \u201C<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\u201D.");
                         documentModeInternal(DocumentMode.STANDARDS_MODE,
                                 publicIdentifier, systemIdentifier, true);
@@ -896,19 +867,11 @@ public abstract class TreeBuilder<T> implements TokenHandler,
                                 publicIdentifier, systemIdentifier, html4);
                     } else if (isAlmostStandards(publicIdentifier,
                             systemIdentifier)) {
-                        if (firstCommentLocation != null) {
-                            warn("Comments seen before doctype. Internet Explorer will go into the quirks mode.",
-                                    firstCommentLocation);
-                        }
                         errAlmostStandardsDoctype();
                         documentModeInternal(
                                 DocumentMode.ALMOST_STANDARDS_MODE,
                                 publicIdentifier, systemIdentifier, html4);
                     } else {
-                        if (firstCommentLocation != null) {
-                            warn("Comments seen before doctype. Internet Explorer will go into the quirks mode.",
-                                    firstCommentLocation);
-                        }
                         if ("-//W3C//DTD HTML 4.01//EN".equals(publicIdentifier)) {
                             if (!"http://www.w3.org/TR/html4/strict.dtd".equals(systemIdentifier)) {
                                 warn("The doctype did not contain the system identifier prescribed by the HTML 4.01 specification. Expected \u201C<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\u201D.");
@@ -982,9 +945,6 @@ public abstract class TreeBuilder<T> implements TokenHandler,
             throws SAXException {
         needToDropLF = false;
         // [NOCPP[
-        if (firstCommentLocation == null) {
-            firstCommentLocation = new LocatorImpl(tokenizer);
-        }
         if (!wantingComments) {
             return;
         }
